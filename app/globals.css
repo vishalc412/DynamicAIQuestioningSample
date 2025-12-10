@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border-soft;
+  }
+
+  body {
+    @apply bg-app-bg text-text-primary;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer utilities {
+  .gradient-accent {
+    background: linear-gradient(135deg, #4ade80, #22d3ee);
+  }
+
+  .gradient-panel {
+    background: linear-gradient(145deg, #151824, #181c2c);
+  }
+
+  .gradient-brain-bg {
+    background: radial-gradient(circle at top, #252a48 0%, #050612 60%);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #4ade80, #22d3ee);
+  }
+}
