@@ -3,7 +3,8 @@
 import { useState, useReducer, useEffect } from 'react';
 import { WizardState, WizardEvent, Message, ChartData } from '@/types/wizard';
 import ConversationPanel from '@/components/ConversationPanel';
-import BrainPanel from '@/components/BrainPanel';
+import HumanAnalystPanel from '@/components/HumanAnalystPanel';
+import ChatInput from '@/components/ChatInput';
 import { getMockChartData, getDeepDiveData } from '@/lib/mockData';
 
 // Initial state
@@ -55,6 +56,9 @@ function wizardReducer(state: WizardState, event: WizardEvent): WizardState {
     case 'SHOW_RESULT':
       return { ...state, step: 'result', isLoading: false };
 
+    case 'SELECT_FOLLOW_UP_ACTION':
+      return { ...state, step: 'complete', showDeepDivePrompt: false };
+
     default:
       return state;
   }
@@ -63,7 +67,14 @@ function wizardReducer(state: WizardState, event: WizardEvent): WizardState {
 export default function Home() {
   const [state, dispatch] = useReducer(wizardReducer, initialState);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [chartData, setChartData] = useState<ChartData | null>(null);
+  const [chartData, setChartData] = useState<ChartData[] | null>(null);
+  const [followUpActions, setFollowUpActions] = useState<string[]>([]);
+  const [deepDiveOptions, setDeepDiveOptions] = useState<string[]>([]);
+  const [metricsSummary, setMetricsSummary] = useState<{
+    deltaPercent: number;
+    direction: 'up' | 'down';
+    keyDrivers: string[];
+  } | null>(null);
   const [brainMode, setBrainMode] = useState<'idle' | 'thinking'>('idle');
 
   // Handle step changes and add messages
@@ -88,23 +99,65 @@ export default function Home() {
 
       // Simulate API call
       setBrainMode('thinking');
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         if (state.deepDiveDimension && state.kpiType && state.region) {
           const deepData = getDeepDiveData(
             state.kpiType,
             state.region,
             state.deepDiveDimension
           );
+
+          // Add deep dive analysis as a message
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `deep-dive-${Date.now()}`,
+              type: 'analysis',
+              content: 'Deep dive analysis complete',
+              timestamp: new Date(),
+              chartData: deepData,
+            },
+          ]);
+
           setChartData(deepData);
+          setFollowUpActions([]);
+          setDeepDiveOptions([]);
+          setMetricsSummary(null); // Clear metrics summary for deep dive
           setBrainMode('idle');
           dispatch({ type: 'SHOW_RESULT' });
         } else if (state.kpiType && state.region) {
           const response = getMockChartData(state.kpiType, state.region);
-          setChartData(response.chart);
+
+          // Add analysis results as a message in the timeline
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `analysis-${Date.now()}`,
+              type: 'analysis',
+              content: 'Analysis complete',
+              timestamp: new Date(),
+              chartData: response.charts,
+              metricsSummary: response.metricsSummary,
+              followUpActions: response.followUpActions,
+              deepDiveOptions: response.deepDiveOptions,
+            },
+          ]);
+
+          setChartData(response.charts);
+          setFollowUpActions(response.followUpActions);
+          setDeepDiveOptions(response.deepDiveOptions);
+          setMetricsSummary(response.metricsSummary);
           setBrainMode('idle');
           dispatch({ type: 'SHOW_RESULT' });
+        } else {
+          // Fallback: if no kpiType or region
+          setBrainMode('idle');
+          console.error('Missing kpiType or region:', { kpiType: state.kpiType, region: state.region });
         }
       }, 3000);
+
+      // Cleanup function to prevent memory leaks
+      return () => clearTimeout(timer);
     } else if (state.step === 'deepDive') {
       addSystemMessage(
         'What dimension would you like to explore? Choose from Store, Category, Customer segment, or Channel.'
@@ -134,6 +187,17 @@ export default function Home() {
         timestamp: new Date(),
       },
     ]);
+  };
+
+  // Handle chat input messages
+  const handleChatMessage = (message: string) => {
+    // Add user message
+    addUserMessage(message);
+
+    // Simulate AI response
+    setTimeout(() => {
+      addSystemMessage(`I understand you want to: "${message}". This feature is being enhanced to provide dynamic responses based on your input.`);
+    }, 1000);
   };
 
   // Custom dispatch to handle state with showDeepDivePrompt
@@ -173,6 +237,22 @@ export default function Home() {
       return;
     }
 
+    if (event.type === 'SELECT_FOLLOW_UP_ACTION') {
+      // User selected a follow-up action
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `msg-${Date.now()}`,
+          type: 'user',
+          content: event.action,
+          timestamp: new Date(),
+        },
+      ]);
+      addSystemMessage(`Great! I'll help you with "${event.action}". This advanced feature is being prepared for you.`);
+      dispatch(event);
+      return;
+    }
+
     dispatch(event);
   };
 
@@ -184,17 +264,31 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-app-bg flex items-center justify-center p-6">
-      <div className="max-w-[1600px] w-full mx-auto">
-        <div className="flex gap-8 items-center h-[95vh]">
-          <ConversationPanel
-            state={panelState}
-            messages={messages}
-            chartData={chartData}
-            onEvent={handleEvent}
-          />
-          <BrainPanel mode={brainMode} />
+    <main className="h-screen bg-app-bg flex flex-col overflow-hidden">
+      {/* Main content area - Conversation and Brain panels */}
+      <div className="flex-1 flex items-center justify-center p-6 overflow-hidden">
+        <div className="max-w-[1600px] w-full mx-auto h-full">
+          <div className="flex gap-8 items-stretch h-full">
+            <ConversationPanel
+              state={panelState}
+              messages={messages}
+              chartData={chartData}
+              followUpActions={followUpActions}
+              deepDiveOptions={deepDiveOptions}
+              metricsSummary={metricsSummary}
+              onEvent={handleEvent}
+            />
+            <HumanAnalystPanel mode={brainMode} state={panelState} />
+          </div>
         </div>
+      </div>
+
+      {/* Footer - Chat input */}
+      <div className="flex-shrink-0">
+        <ChatInput
+          onSendMessage={handleChatMessage}
+          disabled={state.isLoading}
+        />
       </div>
     </main>
   );
