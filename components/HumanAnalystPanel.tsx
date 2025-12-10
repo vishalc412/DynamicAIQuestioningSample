@@ -109,15 +109,14 @@ export default function HumanAnalystPanel({ mode, state }: HumanAnalystPanelProp
             >
               <div className="w-full h-full rounded-2xl bg-app-panel flex items-center justify-center">
                 <svg className="w-7 h-7 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
                 </svg>
               </div>
             </motion.div>
             {/* Active Indicator */}
             <motion.div
-              className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-app-panel ${
-                mode === 'thinking' ? 'bg-accent-primary' : 'bg-accent-secondary'
-              }`}
+              className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-app-panel ${mode === 'thinking' ? 'bg-accent-primary' : 'bg-accent-secondary'
+                }`}
               animate={{ scale: mode === 'thinking' ? [1, 1.3, 1] : 1 }}
               transition={{ duration: 1, repeat: Infinity }}
             />
@@ -125,7 +124,7 @@ export default function HumanAnalystPanel({ mode, state }: HumanAnalystPanelProp
 
           <div className="flex-1">
             <h3 className="text-base font-bold text-text-primary">Smarty</h3>
-            <p className="text-xs text-text-muted">Your AI Sales Assistant</p>
+            <p className="text-xs text-text-muted">Your Company Courtesy</p>
           </div>
 
           {/* Ping Indicator */}
@@ -227,6 +226,89 @@ export default function HumanAnalystPanel({ mode, state }: HumanAnalystPanelProp
             )}
           </div>
         )}
+
+        {/* User Persona Section */}
+        <div className="mt-4 p-3 bg-app-bg/30 backdrop-blur-sm rounded-xl border border-border-soft/30">
+          <div className="flex items-center gap-2 mb-2">
+            <svg className="w-4 h-4 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <h4 className="text-xs font-semibold text-text-primary">Your Profile</h4>
+          </div>
+          <div className="space-y-1.5 text-[10px]">
+            <div className="flex justify-between">
+              <span className="text-text-muted">Name:</span>
+              <span className="text-text-primary font-medium">{state.name}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-text-muted">Role:</span>
+              <span className="text-text-primary font-medium">{state.role}</span>
+            </div>
+            {state.region && (
+              <div className="flex justify-between">
+                <span className="text-text-muted">Focus Region:</span>
+                <span className="text-accent-primary font-medium">{state.region}</span>
+              </div>
+            )}
+            {state.kpiType && (
+              <div className="flex justify-between">
+                <span className="text-text-muted">Current KPI:</span>
+                <span className="text-accent-secondary font-medium text-[9px]">{state.kpiType.slice(0, 15)}...</span>
+              </div>
+            )}
+          </div>
+
+          {/* Activity Summary */}
+          <div className="mt-3 pt-3 border-t border-border-soft/20">
+            <div className="flex items-center gap-1.5 mb-2">
+              <svg className="w-3.5 h-3.5 text-accent-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span className="text-[9px] text-text-muted font-semibold">Recent Activity</span>
+            </div>
+            <div className="space-y-1">
+              {state.step === 'result' || state.step === 'deepDive' ? (
+                <>
+                  <div className="flex items-center gap-1.5 text-[9px]">
+                    <div className="w-1 h-1 rounded-full bg-green-400"></div>
+                    <span className="text-text-secondary">Analyzed {state.kpiType || 'sales data'}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[9px]">
+                    <div className="w-1 h-1 rounded-full bg-blue-400"></div>
+                    <span className="text-text-secondary">Reviewed {state.region} performance</span>
+                  </div>
+                  {state.deepDiveDimension && (
+                    <div className="flex items-center gap-1.5 text-[9px]">
+                      <div className="w-1 h-1 rounded-full bg-purple-400"></div>
+                      <span className="text-text-secondary">Deep dive: {state.deepDiveDimension}</span>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-[9px] text-text-muted italic">
+                  Start analysis to track activity
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* AI Insights */}
+          <div className="mt-3 pt-3 border-t border-border-soft/20">
+            <div className="flex items-center gap-1.5 mb-2">
+              <svg className="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+              </svg>
+              <span className="text-[9px] text-text-muted font-semibold">AI Persona</span>
+            </div>
+            <div className="text-[9px] text-text-secondary leading-relaxed">
+              {state.region && state.kpiType ? (
+                `I've learned you focus on ${state.region} ${state.kpiType.toLowerCase()}. I'll prioritize insights for this region and metric.`
+              ) : (
+                `I'm learning your preferences to provide personalized insights and recommendations.`
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* FMCG Products Showcase - Context Aware */}
@@ -234,9 +316,8 @@ export default function HumanAnalystPanel({ mode, state }: HumanAnalystPanelProp
         <div className="relative w-full max-w-[240px] h-[200px]">
           {/* Pepsi Can */}
           <motion.div
-            className={`absolute top-0 left-6 w-14 h-20 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg shadow-xl border ${
-              highlightedProduct === 'pepsi' ? 'border-blue-300' : 'border-blue-400/30'
-            }`}
+            className={`absolute top-0 left-6 w-14 h-20 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg shadow-xl border ${highlightedProduct === 'pepsi' ? 'border-blue-300' : 'border-blue-400/30'
+              }`}
             animate={
               mode === 'thinking' || highlightedProduct === 'pepsi'
                 ? { y: [0, -12, 0], rotate: [-2, 3, -2], scale: highlightedProduct === 'pepsi' ? [1, 1.1, 1] : [1, 1.05, 1] }
@@ -261,9 +342,8 @@ export default function HumanAnalystPanel({ mode, state }: HumanAnalystPanelProp
 
           {/* Lays Bag */}
           <motion.div
-            className={`absolute top-6 right-6 w-18 h-24 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 rounded-2xl shadow-xl border ${
-              highlightedProduct === 'lays' ? 'border-yellow-200' : 'border-yellow-300/30'
-            }`}
+            className={`absolute top-6 right-6 w-18 h-24 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 rounded-2xl shadow-xl border ${highlightedProduct === 'lays' ? 'border-yellow-200' : 'border-yellow-300/30'
+              }`}
             animate={
               mode === 'thinking' || highlightedProduct === 'lays'
                 ? { y: [0, -10, 0], rotate: [2, -3, 2], scale: highlightedProduct === 'lays' ? [1, 1.1, 1] : [1, 1.05, 1] }

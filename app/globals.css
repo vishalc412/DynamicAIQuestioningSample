@@ -48,4 +48,17 @@
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: rgba(74, 222, 128, 0.4);
   }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+  }
 }
