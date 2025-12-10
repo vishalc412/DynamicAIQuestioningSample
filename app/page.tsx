@@ -278,7 +278,7 @@ export default function Home() {
               metricsSummary={metricsSummary}
               onEvent={handleEvent}
             />
-            <HumanAnalystPanel mode={brainMode} />
+            <HumanAnalystPanel mode={brainMode} state={panelState} />
           </div>
         </div>
       </div>
