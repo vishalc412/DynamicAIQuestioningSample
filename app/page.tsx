@@ -3,7 +3,7 @@
 import { useState, useReducer, useEffect } from 'react';
 import { WizardState, WizardEvent, Message, ChartData } from '@/types/wizard';
 import ConversationPanel from '@/components/ConversationPanel';
-import BrainPanel from '@/components/BrainPanel';
+import HumanAnalystPanel from '@/components/HumanAnalystPanel';
 import ChatInput from '@/components/ChatInput';
 import { getMockChartData, getDeepDiveData } from '@/lib/mockData';
 
@@ -106,6 +106,19 @@ export default function Home() {
             state.region,
             state.deepDiveDimension
           );
+
+          // Add deep dive analysis as a message
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `deep-dive-${Date.now()}`,
+              type: 'analysis',
+              content: 'Deep dive analysis complete',
+              timestamp: new Date(),
+              chartData: deepData,
+            },
+          ]);
+
           setChartData(deepData);
           setFollowUpActions([]);
           setDeepDiveOptions([]);
@@ -114,6 +127,22 @@ export default function Home() {
           dispatch({ type: 'SHOW_RESULT' });
         } else if (state.kpiType && state.region) {
           const response = getMockChartData(state.kpiType, state.region);
+
+          // Add analysis results as a message in the timeline
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `analysis-${Date.now()}`,
+              type: 'analysis',
+              content: 'Analysis complete',
+              timestamp: new Date(),
+              chartData: response.charts,
+              metricsSummary: response.metricsSummary,
+              followUpActions: response.followUpActions,
+              deepDiveOptions: response.deepDiveOptions,
+            },
+          ]);
+
           setChartData(response.charts);
           setFollowUpActions(response.followUpActions);
           setDeepDiveOptions(response.deepDiveOptions);
@@ -249,7 +278,7 @@ export default function Home() {
               metricsSummary={metricsSummary}
               onEvent={handleEvent}
             />
-            <BrainPanel mode={brainMode} />
+            <HumanAnalystPanel mode={brainMode} />
           </div>
         </div>
       </div>

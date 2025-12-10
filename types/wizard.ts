@@ -53,7 +53,16 @@ export type AnalysisResponse = {
 
 export type Message = {
   id: string;
-  type: 'system' | 'user';
+  type: 'system' | 'user' | 'analysis';
   content: string;
   timestamp: Date;
+  // Optional chart data for analysis messages
+  chartData?: ChartData[];
+  metricsSummary?: {
+    deltaPercent: number;
+    direction: 'up' | 'down';
+    keyDrivers: string[];
+  };
+  followUpActions?: string[];
+  deepDiveOptions?: string[];
 };

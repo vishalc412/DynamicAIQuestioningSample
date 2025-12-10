@@ -7,6 +7,7 @@ import ChoiceChipGroup from './ChoiceChipGroup';
 import ChartCard from './ChartCard';
 import InlineLoader from './InlineLoader';
 import MetricsSummary from './MetricsSummary';
+import AnalysisMessage from './AnalysisMessage';
 
 interface ConversationPanelProps {
   state: WizardState;
@@ -51,34 +52,57 @@ export default function ConversationPanel({
   return (
     <div className="flex-[0_0_68%] max-w-[1100px] h-full flex flex-col bg-app-panel gradient-panel rounded-3xl shadow-2xl overflow-hidden border border-border-soft/50">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-border-soft/50 bg-gradient-to-r from-app-panel to-app-chat-system">
+      <div className="px-8 py-6 border-b border-border-soft/50 bg-gradient-to-r from-app-panel via-app-chat-system to-app-panel">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-secondary p-0.5 shadow-xl">
+                <div className="w-full h-full rounded-2xl bg-app-panel flex items-center justify-center">
+                  <svg className="w-6 h-6 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-accent-secondary rounded-full border-2 border-app-panel"></div>
             </div>
             <div>
               <h1 className="text-xl font-bold text-text-primary">
-                FMCG Sales & JBP Assistant
+                Your Personal Sales Analyst
               </h1>
-              <p className="text-xs text-text-muted">Powered by AI</p>
+              <p className="text-xs text-text-secondary flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-secondary animate-pulse"></span>
+                Available 24/7 for insights
+              </p>
             </div>
           </div>
           {state.region && (
-            <span className="px-4 py-2 rounded-full bg-accent-primary/15 text-accent-primary text-sm font-semibold border border-accent-primary/40 shadow-lg">
-              {state.region}
-            </span>
+            <div className="px-4 py-2 rounded-xl bg-gradient-to-r from-accent-primary/10 to-accent-secondary/10 border border-accent-primary/30 backdrop-blur-sm">
+              <span className="text-accent-primary text-sm font-semibold flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {state.region}
+              </span>
+            </div>
           )}
         </div>
       </div>
 
       {/* Scrollable conversation area */}
       <div className="flex-1 overflow-y-auto px-8 py-6 space-y-4 scrollbar-thin scrollbar-thumb-accent-primary/20 scrollbar-track-transparent">
-        {/* Messages */}
+        {/* Messages and Analysis Results */}
         {messages.map((message) => (
-          <MessageBubble key={message.id} message={message} />
+          <React.Fragment key={message.id}>
+            {message.type === 'analysis' && message.chartData ? (
+              <AnalysisMessage
+                chartData={message.chartData}
+                metricsSummary={message.metricsSummary}
+              />
+            ) : (
+              <MessageBubble message={message} />
+            )}
+          </React.Fragment>
         ))}
 
         {/* Welcome state */}
