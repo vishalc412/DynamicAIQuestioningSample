@@ -369,13 +369,76 @@ export default function Home() {
         }, 500);
         return;
       }
+      // Show recommendations
+      else if (lowerMsg.includes('recommendation') || lowerMsg.includes('suggest') || lowerMsg.includes('show recommendations')) {
+        // Set chart data for recommendations
+        const recommendationsChart: ChartData = {
+          type: 'bar',
+          title: 'Strategic Recommendations - ROI vs Cost Analysis',
+          subtitle: 'Expected ROI and Implementation Cost for each strategy',
+          xAxis: ['Expand High-Performers', 'Optimize Operations', 'Seasonal Campaigns', 'Customer Retention', 'New Markets'],
+          series: [
+            { name: 'Expected ROI (%)', values: [28, 22, 35, 18, 25] },
+            { name: 'Implementation Cost (M$)', values: [5.2, 3.8, 6.5, 2.1, 8.3] }
+          ]
+        };
+
+        setChartData([recommendationsChart]);
+        setFollowUpActions([
+          'Show detailed recommendations',
+          'Compare with baseline',
+          'Analyze another KPI',
+          'Start new analysis'
+        ]);
+
+        response = `💡 **Strategic Recommendations Based on Analysis:**\n\n**1. Expand High-Performing Segments** (+28% ROI)\n   • Increase investment in top 3 segments by 15-20%\n   • Expected revenue increase: $12.5M annually\n   • Timeline: 6-9 months\n\n**2. Optimize Underperforming Areas** (+22% ROI)\n   • Focus on operational efficiency\n   • Reduce costs by 8-12%\n   • Timeline: 3-6 months\n\n**3. Leverage Seasonal Trends** (+35% ROI)\n   • Plan campaigns around peak periods\n   • Increase marketing spend by 25% during Q4\n   • Expected lift: 18-22%\n\n**4. Customer Retention Programs** (+18% ROI)\n   • Implement loyalty programs\n   • Reduce churn by 15%\n   • Lifetime value increase: $850 per customer\n\n**5. Enter New Markets** (+25% ROI)\n   • Expand to 3 new regions\n   • Market penetration target: 12-15%\n   • Investment required: $8.3M\n\nWould you like detailed recommendations or compare with baseline?`;
+      }
+      // Show detailed recommendations
+      else if (lowerMsg.includes('detailed recommendation') || lowerMsg.includes('detailed action') || lowerMsg.includes('action plan')) {
+        const detailedChart: ChartData = {
+          type: 'line',
+          title: 'Revenue Growth Projection - 6 Month Outlook',
+          subtitle: 'Projected vs Current Trajectory',
+          xAxis: ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
+          series: [
+            { name: 'Projected Revenue Growth', values: [100, 108, 118, 132, 148, 165] },
+            { name: 'Current Trajectory', values: [100, 103, 106, 109, 112, 115] }
+          ]
+        };
+
+        setChartData([detailedChart]);
+        setFollowUpActions([
+          'Compare with baseline',
+          'Analyze another dimension',
+          'Analyze another KPI',
+          'Start new analysis'
+        ]);
+
+        response = `📋 **Detailed Action Plan:**\n\n**Phase 1: Quick Wins (0-3 months)**\n1. Launch targeted marketing campaign\n   • Budget: $2.5M\n   • Target: Underperforming regions\n   • Expected lift: 12-15%\n\n2. Optimize pricing strategy\n   • Focus on top 5 products\n   • Price elasticity analysis\n   • Revenue impact: +$3.2M\n\n3. Implement weekly tracking dashboard\n   • Real-time performance monitoring\n   • Automated alerts for anomalies\n   • Cost: $150K\n\n**Phase 2: Growth Initiatives (3-6 months)**\n1. Expand product line\n   • Add 4 new SKUs\n   • Market testing: 2 months\n   • Launch investment: $1.8M\n\n2. Partner with new distributors\n   • Target: 8 new partners\n   • Coverage increase: 25%\n   • Revenue potential: $5.5M\n\n3. Launch customer loyalty program\n   • Tiered rewards system\n   • Mobile app integration\n   • Investment: $900K\n\n**Phase 3: Market Expansion (6-12 months)**\n1. Open new retail locations\n   • Target: 15 new stores\n   • Geographic expansion\n   • Investment: $12M\n\n2. Implement AI-driven forecasting\n   • Demand prediction accuracy: +35%\n   • Inventory optimization\n   • Cost savings: $2.1M annually\n\n3. Market share growth target\n   • Increase from 18% to 25%\n   • Revenue target: +$28M\n\n**Expected ROI:** 165% revenue growth over 6 months\n**Total Investment:** $18.5M\n**Projected Return:** $42.3M\n\nWould you like to compare this with baseline performance?`;
+      }
       // Compare with baseline
       else if (lowerMsg.includes('baseline') || lowerMsg.includes('compare with baseline')) {
-        response = `📈 Baseline comparison:\n\n• Current performance: ${(Math.random() * 10 + 90).toFixed(1)}% of target\n• vs Baseline: +${(Math.random() * 15 + 10).toFixed(1)}% improvement\n• Key improvements: Efficiency, customer reach, conversion rate\n• Areas to watch: Seasonal variations, market conditions\n\nWould you like detailed breakdown by segment?`;
-      }
-      // Show recommendations
-      else if (lowerMsg.includes('recommendation') || lowerMsg.includes('suggest')) {
-        response = `💡 Based on the analysis, here are my recommendations:\n\n1. **Expand high-performing segments** - Increase investment by ${(Math.random() * 10 + 15).toFixed(0)}%\n2. **Optimize underperforming areas** - Focus on operational efficiency\n3. **Leverage seasonal trends** - Plan campaigns around peak periods\n4. **Customer retention** - Implement loyalty programs\n\nWould you like a detailed action plan for any of these?`;
+        const baselineChart: ChartData = {
+          type: 'bar',
+          title: 'Performance vs Baseline Comparison',
+          subtitle: 'Current vs Last Year vs Industry Average',
+          xAxis: ['Revenue', 'Market Share', 'Customer Acquisition', 'Retention Rate', 'Profit Margin'],
+          series: [
+            { name: 'Current Performance', values: [92, 88, 85, 78, 82] },
+            { name: 'Baseline (Last Year)', values: [78, 75, 72, 68, 75] },
+            { name: 'Industry Average', values: [85, 82, 80, 75, 79] }
+          ]
+        };
+
+        setChartData([baselineChart]);
+        setFollowUpActions([
+          'Show recommendations',
+          'Analyze another dimension',
+          'Analyze another KPI',
+          'Start new analysis'
+        ]);
+
+        response = `📈 **Baseline Comparison Analysis:**\n\n**Overall Performance: 92.4% of target** ✅\n**vs Baseline: +14.2% improvement** 📈\n\n**Key Metrics Breakdown:**\n\n**Revenue Performance:**\n• Current: $125.8M (92% of target)\n• Baseline: $98.2M\n• Growth: +28.1% YoY\n• vs Industry: +8.2% above average\n\n**Market Share:**\n• Current: 18.5%\n• Baseline: 15.2%\n• Growth: +3.3 percentage points\n• Rank: #2 in category (up from #4)\n\n**Customer Acquisition:**\n• Current: 85K new customers\n• Baseline: 68K\n• Growth: +25% YoY\n• Cost per acquisition: -12% (improved)\n\n**Retention Rate:**\n• Current: 78%\n• Baseline: 68%\n• Improvement: +10 percentage points\n• Churn reduction: 15%\n\n**Profit Margin:**\n• Current: 16.4%\n• Baseline: 15.0%\n• Improvement: +1.4 percentage points\n• Operating efficiency: +9%\n\n**Key Improvements:**\n✅ Efficiency: +12% operational improvement\n✅ Customer Reach: +25% market penetration\n✅ Conversion Rate: +18% improvement\n✅ Product Mix: Optimized portfolio (+$8.5M)\n\n**Areas to Watch:**\n⚠️ Seasonal variations: Q1 typically -8% below average\n⚠️ Market conditions: Competitive pressure increasing\n⚠️ Supply chain: Lead times +5% vs baseline\n\n**Competitive Position:**\n• Outperforming 3 of 5 key competitors\n• Market leader in 2 product categories\n• Price premium maintained at 8%\n\nWould you like detailed breakdown by segment or see recommendations?`;
       }
       // Analyze area lacking
       else if (lowerMsg.includes('area lacking') || lowerMsg.includes('analyze area')) {

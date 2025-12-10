@@ -115,8 +115,8 @@ export default function ChatInput({
               onClick={toggleVoiceInput}
               disabled={disabled}
               className={`group px-4 py-3 rounded-xl font-semibold text-sm shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 ${isListening
-                  ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
-                  : 'bg-app-bg/50 border border-border-soft/50 text-text-primary hover:border-accent-primary/50 hover:bg-accent-primary/10'
+                ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
+                : 'bg-app-bg/50 border border-border-soft/50 text-text-primary hover:border-accent-primary/50 hover:bg-accent-primary/10'
                 }`}
               title={isListening ? 'Stop recording' : 'Start voice input'}
             >
