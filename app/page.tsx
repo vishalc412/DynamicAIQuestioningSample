@@ -70,6 +70,11 @@ export default function Home() {
   const [chartData, setChartData] = useState<ChartData[] | null>(null);
   const [followUpActions, setFollowUpActions] = useState<string[]>([]);
   const [deepDiveOptions, setDeepDiveOptions] = useState<string[]>([]);
+  const [metricsSummary, setMetricsSummary] = useState<{
+    deltaPercent: number;
+    direction: 'up' | 'down';
+    keyDrivers: string[];
+  } | null>(null);
   const [brainMode, setBrainMode] = useState<'idle' | 'thinking'>('idle');
 
   // Handle step changes and add messages
@@ -104,6 +109,7 @@ export default function Home() {
           setChartData(deepData);
           setFollowUpActions([]);
           setDeepDiveOptions([]);
+          setMetricsSummary(null); // Clear metrics summary for deep dive
           setBrainMode('idle');
           dispatch({ type: 'SHOW_RESULT' });
         } else if (state.kpiType && state.region) {
@@ -111,6 +117,7 @@ export default function Home() {
           setChartData(response.charts);
           setFollowUpActions(response.followUpActions);
           setDeepDiveOptions(response.deepDiveOptions);
+          setMetricsSummary(response.metricsSummary);
           setBrainMode('idle');
           dispatch({ type: 'SHOW_RESULT' });
         } else {
@@ -239,6 +246,7 @@ export default function Home() {
               chartData={chartData}
               followUpActions={followUpActions}
               deepDiveOptions={deepDiveOptions}
+              metricsSummary={metricsSummary}
               onEvent={handleEvent}
             />
             <BrainPanel mode={brainMode} />

@@ -6,6 +6,7 @@ import MessageBubble from './MessageBubble';
 import ChoiceChipGroup from './ChoiceChipGroup';
 import ChartCard from './ChartCard';
 import InlineLoader from './InlineLoader';
+import MetricsSummary from './MetricsSummary';
 
 interface ConversationPanelProps {
   state: WizardState;
@@ -13,6 +14,11 @@ interface ConversationPanelProps {
   chartData: ChartData[] | null;
   followUpActions: string[];
   deepDiveOptions: string[];
+  metricsSummary: {
+    deltaPercent: number;
+    direction: 'up' | 'down';
+    keyDrivers: string[];
+  } | null;
   onEvent: (event: WizardEvent) => void;
 }
 
@@ -22,6 +28,7 @@ export default function ConversationPanel({
   chartData,
   followUpActions,
   deepDiveOptions,
+  metricsSummary,
   onEvent,
 }: ConversationPanelProps) {
   const regionChoices = [
@@ -145,6 +152,15 @@ export default function ConversationPanel({
         {/* Chart display - Multiple charts */}
         {chartData && state.step === 'result' && (
           <div className="space-y-6">
+            {/* Metrics Summary */}
+            {metricsSummary && (
+              <MetricsSummary
+                deltaPercent={metricsSummary.deltaPercent}
+                direction={metricsSummary.direction}
+                keyDrivers={metricsSummary.keyDrivers}
+              />
+            )}
+
             {/* Display all charts */}
             <div className="grid grid-cols-1 gap-6">
               {chartData.map((chart, index) => (
