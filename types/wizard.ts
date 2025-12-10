@@ -26,11 +26,13 @@ export type WizardEvent =
   | { type: 'SHOW_RESULT' }
   | { type: 'TOGGLE_DEEP_DIVE'; wantDeepDive: boolean }
   | { type: 'SELECT_DEEP_DIMENSION'; dimension: string }
+  | { type: 'SELECT_FOLLOW_UP_ACTION'; action: string }
   | { type: 'RESET_FLOW' };
 
 export type ChartData = {
   title: string;
   subtitle: string;
+  type: 'bar' | 'line' | 'pie';
   xAxis: string[];
   series: {
     name: string;
@@ -39,13 +41,14 @@ export type ChartData = {
 };
 
 export type AnalysisResponse = {
-  chart: ChartData;
+  charts: ChartData[];  // Changed from single chart to multiple charts
   metricsSummary: {
     deltaPercent: number;
     direction: 'up' | 'down';
     keyDrivers: string[];
   };
   deepDiveOptions: string[];
+  followUpActions: string[];  // New: follow-up action questions
 };
 
 export type Message = {

@@ -6,6 +6,9 @@ import {
   Line,
   BarChart,
   Bar,
+  PieChart,
+  Pie,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -17,10 +20,9 @@ import { ChartData } from '@/types/wizard';
 
 interface ChartCardProps {
   data: ChartData;
-  chartType?: 'line' | 'bar';
 }
 
-export default function ChartCard({ data, chartType = 'bar' }: ChartCardProps) {
+export default function ChartCard({ data }: ChartCardProps) {
   // Transform data for recharts
   const chartData = data.xAxis.map((label, index) => {
     const point: any = { name: label };
@@ -30,7 +32,7 @@ export default function ChartCard({ data, chartType = 'bar' }: ChartCardProps) {
     return point;
   });
 
-  const colors = ['#4ade80', '#38bdf8', '#f472b6', '#fbbf24'];
+  const colors = ['#4ade80', '#38bdf8', '#f472b6', '#fbbf24', '#a78bfa', '#fb923c'];
 
   return (
     <div className="animate-slide-up bg-app-panel gradient-panel rounded-3xl p-6 border border-border-soft shadow-2xl">
@@ -40,7 +42,36 @@ export default function ChartCard({ data, chartType = 'bar' }: ChartCardProps) {
       </div>
 
       <ResponsiveContainer width="100%" height={320}>
-        {chartType === 'line' ? (
+        {data.type === 'pie' ? (
+          <PieChart>
+            <Pie
+              data={chartData}
+              cx="50%"
+              cy="50%"
+              labelLine={true}
+              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
+              outerRadius={100}
+              fill="#8884d8"
+              dataKey={data.series[0]?.name || 'value'}
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+              ))}
+            </Pie>
+            <Tooltip
+              contentStyle={{
+                backgroundColor: '#151824',
+                border: '1px solid rgba(148, 163, 184, 0.24)',
+                borderRadius: '12px',
+                color: '#f9fafb',
+              }}
+            />
+            <Legend
+              wrapperStyle={{ paddingTop: '20px' }}
+              iconType="circle"
+            />
+          </PieChart>
+        ) : data.type === 'line' ? (
           <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.1)" />
             <XAxis

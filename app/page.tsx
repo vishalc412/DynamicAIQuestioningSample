@@ -4,6 +4,7 @@ import { useState, useReducer, useEffect } from 'react';
 import { WizardState, WizardEvent, Message, ChartData } from '@/types/wizard';
 import ConversationPanel from '@/components/ConversationPanel';
 import BrainPanel from '@/components/BrainPanel';
+import ChatInput from '@/components/ChatInput';
 import { getMockChartData, getDeepDiveData } from '@/lib/mockData';
 
 // Initial state
@@ -55,6 +56,9 @@ function wizardReducer(state: WizardState, event: WizardEvent): WizardState {
     case 'SHOW_RESULT':
       return { ...state, step: 'result', isLoading: false };
 
+    case 'SELECT_FOLLOW_UP_ACTION':
+      return { ...state, step: 'complete', showDeepDivePrompt: false };
+
     default:
       return state;
   }
@@ -63,7 +67,9 @@ function wizardReducer(state: WizardState, event: WizardEvent): WizardState {
 export default function Home() {
   const [state, dispatch] = useReducer(wizardReducer, initialState);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [chartData, setChartData] = useState<ChartData | null>(null);
+  const [chartData, setChartData] = useState<ChartData[] | null>(null);
+  const [followUpActions, setFollowUpActions] = useState<string[]>([]);
+  const [deepDiveOptions, setDeepDiveOptions] = useState<string[]>([]);
   const [brainMode, setBrainMode] = useState<'idle' | 'thinking'>('idle');
 
   // Handle step changes and add messages
@@ -96,11 +102,15 @@ export default function Home() {
             state.deepDiveDimension
           );
           setChartData(deepData);
+          setFollowUpActions([]);
+          setDeepDiveOptions([]);
           setBrainMode('idle');
           dispatch({ type: 'SHOW_RESULT' });
         } else if (state.kpiType && state.region) {
           const response = getMockChartData(state.kpiType, state.region);
-          setChartData(response.chart);
+          setChartData(response.charts);
+          setFollowUpActions(response.followUpActions);
+          setDeepDiveOptions(response.deepDiveOptions);
           setBrainMode('idle');
           dispatch({ type: 'SHOW_RESULT' });
         } else {
@@ -143,6 +153,17 @@ export default function Home() {
     ]);
   };
 
+  // Handle chat input messages
+  const handleChatMessage = (message: string) => {
+    // Add user message
+    addUserMessage(message);
+
+    // Simulate AI response
+    setTimeout(() => {
+      addSystemMessage(`I understand you want to: "${message}". This feature is being enhanced to provide dynamic responses based on your input.`);
+    }, 1000);
+  };
+
   // Custom dispatch to handle state with showDeepDivePrompt
   const handleEvent = (event: WizardEvent) => {
     if (event.type === 'REQUEST_ANALYSIS') {
@@ -180,6 +201,22 @@ export default function Home() {
       return;
     }
 
+    if (event.type === 'SELECT_FOLLOW_UP_ACTION') {
+      // User selected a follow-up action
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `msg-${Date.now()}`,
+          type: 'user',
+          content: event.action,
+          timestamp: new Date(),
+        },
+      ]);
+      addSystemMessage(`Great! I'll help you with "${event.action}". This advanced feature is being prepared for you.`);
+      dispatch(event);
+      return;
+    }
+
     dispatch(event);
   };
 
@@ -191,17 +228,30 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-app-bg flex items-center justify-center p-6">
-      <div className="max-w-[1600px] w-full mx-auto">
-        <div className="flex gap-8 items-center h-[95vh]">
-          <ConversationPanel
-            state={panelState}
-            messages={messages}
-            chartData={chartData}
-            onEvent={handleEvent}
-          />
-          <BrainPanel mode={brainMode} />
+    <main className="min-h-screen bg-app-bg flex flex-col">
+      {/* Main content area */}
+      <div className="flex-1 flex items-center justify-center p-6 pb-0">
+        <div className="max-w-[1600px] w-full mx-auto">
+          <div className="flex gap-8 items-center h-[calc(100vh-180px)]">
+            <ConversationPanel
+              state={panelState}
+              messages={messages}
+              chartData={chartData}
+              followUpActions={followUpActions}
+              deepDiveOptions={deepDiveOptions}
+              onEvent={handleEvent}
+            />
+            <BrainPanel mode={brainMode} />
+          </div>
         </div>
+      </div>
+
+      {/* Fixed chat input at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 z-50">
+        <ChatInput
+          onSendMessage={handleChatMessage}
+          disabled={state.isLoading}
+        />
       </div>
     </main>
   );

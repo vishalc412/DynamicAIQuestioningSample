@@ -10,7 +10,9 @@ import InlineLoader from './InlineLoader';
 interface ConversationPanelProps {
   state: WizardState;
   messages: Message[];
-  chartData: ChartData | null;
+  chartData: ChartData[] | null;
+  followUpActions: string[];
+  deepDiveOptions: string[];
   onEvent: (event: WizardEvent) => void;
 }
 
@@ -18,40 +20,37 @@ export default function ConversationPanel({
   state,
   messages,
   chartData,
+  followUpActions,
+  deepDiveOptions,
   onEvent,
 }: ConversationPanelProps) {
   const regionChoices = [
-    { id: 'North America', label: 'North America', icon: '🌎' },
+    { id: 'North America', label: 'North America' },
   ];
 
   const salesKpiChoices = [
-    { id: 'Store sales', label: 'Store sales', icon: '🏪' },
-    { id: 'Overall sales', label: 'Overall sales', icon: '📊' },
-    { id: 'Joint business planning', label: 'Joint business planning', icon: '🤝' },
-    { id: 'Channel sales', label: 'Channel sales', icon: '📱' },
-    { id: 'Online sales', label: 'Online sales', icon: '🛒' },
+    { id: 'Store sales', label: 'Store sales' },
+    { id: 'Overall sales', label: 'Overall sales' },
+    { id: 'Joint business planning', label: 'Joint business planning' },
+    { id: 'Channel sales', label: 'Channel sales' },
+    { id: 'Online sales', label: 'Online sales' },
   ];
 
   const marketingKpiChoices = [
-    { id: 'Campaign performance', label: 'Campaign performance', icon: '📢' },
-    { id: 'Trade promotions impact', label: 'Trade promotions impact', icon: '💰' },
-  ];
-
-  const deepDiveChoices = [
-    { id: 'Store', label: 'Store' },
-    { id: 'Category', label: 'Category' },
-    { id: 'Customer segment', label: 'Customer segment' },
-    { id: 'Channel', label: 'Channel' },
+    { id: 'Campaign performance', label: 'Campaign performance' },
+    { id: 'Trade promotions impact', label: 'Trade promotions impact' },
   ];
 
   return (
-    <div className="flex-[0_0_58%] max-w-[900px] h-screen flex flex-col bg-app-panel gradient-panel rounded-3xl shadow-2xl overflow-hidden border border-border-soft/50">
+    <div className="flex-[0_0_68%] max-w-[1100px] h-screen flex flex-col bg-app-panel gradient-panel rounded-3xl shadow-2xl overflow-hidden border border-border-soft/50">
       {/* Header */}
       <div className="px-8 py-6 border-b border-border-soft/50 bg-gradient-to-r from-app-panel to-app-chat-system">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg">
-              <span className="text-2xl">🤖</span>
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
             </div>
             <div>
               <h1 className="text-xl font-bold text-text-primary">
@@ -62,7 +61,7 @@ export default function ConversationPanel({
           </div>
           {state.region && (
             <span className="px-4 py-2 rounded-full bg-accent-primary/15 text-accent-primary text-sm font-semibold border border-accent-primary/40 shadow-lg">
-              📍 {state.region}
+              {state.region}
             </span>
           )}
         </div>
@@ -80,7 +79,7 @@ export default function ConversationPanel({
           <div className="animate-slide-up space-y-8 pt-12">
             <div className="space-y-4">
               <div className="inline-block px-4 py-2 bg-accent-primary/10 border border-accent-primary/30 rounded-full mb-2">
-                <span className="text-accent-primary text-sm font-semibold">👋 Welcome</span>
+                <span className="text-accent-primary text-sm font-semibold">Welcome</span>
               </div>
               <h2 className="text-4xl font-bold text-text-primary leading-tight">
                 Hi {state.name}, <br />
@@ -91,7 +90,6 @@ export default function ConversationPanel({
                 marketing campaigns, and joint business planning metrics.
               </p>
               <div className="flex items-center gap-2 text-text-muted text-sm">
-                <span>💡</span>
                 <span>Click an option below or type your question</span>
               </div>
             </div>
@@ -144,13 +142,18 @@ export default function ConversationPanel({
         {/* Loading state */}
         {state.isLoading && <InlineLoader />}
 
-        {/* Chart display */}
+        {/* Chart display - Multiple charts */}
         {chartData && state.step === 'result' && (
           <div className="space-y-6">
-            <ChartCard data={chartData} chartType="bar" />
+            {/* Display all charts */}
+            <div className="grid grid-cols-1 gap-6">
+              {chartData.map((chart, index) => (
+                <ChartCard key={`chart-${index}`} data={chart} />
+              ))}
+            </div>
 
             {/* Deep dive prompt */}
-            {state.showDeepDivePrompt && (
+            {state.showDeepDivePrompt && deepDiveOptions.length > 0 && (
               <div className="animate-slide-up space-y-4">
                 <p className="text-text-primary text-lg">
                   Would you like a deeper analysis with filters?
@@ -171,14 +174,29 @@ export default function ConversationPanel({
                 </div>
               </div>
             )}
+
+            {/* Follow-up actions */}
+            {!state.showDeepDivePrompt && followUpActions.length > 0 && (
+              <div className="animate-slide-up space-y-4 pt-4">
+                <p className="text-text-primary text-lg font-semibold">
+                  What would you like me to do next?
+                </p>
+                <ChoiceChipGroup
+                  choices={followUpActions.map(action => ({ id: action, label: action }))}
+                  onSelect={(action) => {
+                    onEvent({ type: 'SELECT_FOLLOW_UP_ACTION', action });
+                  }}
+                />
+              </div>
+            )}
           </div>
         )}
 
         {/* Deep dive dimension selection */}
-        {state.step === 'deepDive' && (
+        {state.step === 'deepDive' && deepDiveOptions.length > 0 && (
           <div className="space-y-4">
             <ChoiceChipGroup
-              choices={deepDiveChoices}
+              choices={deepDiveOptions.map(option => ({ id: option, label: option }))}
               onSelect={(dimension) =>
                 onEvent({ type: 'SELECT_DEEP_DIMENSION', dimension })
               }
