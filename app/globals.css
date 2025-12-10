@@ -30,4 +30,22 @@
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(135deg, #4ade80, #22d3ee);
   }
+
+  /* Custom scrollbar */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(74, 222, 128, 0.2);
+    border-radius: 10px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(74, 222, 128, 0.4);
+  }
 }

@@ -47,19 +47,21 @@ export default function ChoiceChipGroup({
             key={choice.id}
             onClick={() => handleSelect(choice.id)}
             className={`
-              px-5 py-3 rounded-xl text-sm font-medium
-              transition-all duration-150 ease-out
-              hover:scale-102 hover:border-accent-primary/40
+              group relative px-6 py-3.5 rounded-2xl text-sm font-semibold
+              transition-all duration-200 ease-out
+              hover:scale-105 hover:shadow-lg
               ${
                 isSelected
-                  ? 'bg-chip-active border-2 border-accent-primary text-accent-primary'
-                  : 'bg-chip-bg border border-border-soft text-text-primary hover:bg-chip-active/50'
+                  ? 'bg-gradient-to-r from-accent-primary to-accent-secondary text-white shadow-lg shadow-accent-primary/30'
+                  : 'bg-gradient-to-br from-chip-bg to-app-chat-system border border-border-soft/50 text-text-primary hover:border-accent-primary/40 hover:shadow-accent-primary/20'
               }
             `}
           >
-            {choice.icon && <span className="mr-2">{choice.icon}</span>}
-            {choice.label}
-            {isSelected && <span className="ml-2">✓</span>}
+            <span className="flex items-center gap-2">
+              {choice.icon && <span className="text-lg">{choice.icon}</span>}
+              <span>{choice.label}</span>
+              {isSelected && <span className="ml-1">✓</span>}
+            </span>
           </button>
         );
       })}

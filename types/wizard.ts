@@ -23,6 +23,7 @@ export type WizardEvent =
   | { type: 'SELECT_REGION'; region: string }
   | { type: 'SELECT_KPI'; kpiType: string }
   | { type: 'REQUEST_ANALYSIS' }
+  | { type: 'SHOW_RESULT' }
   | { type: 'TOGGLE_DEEP_DIVE'; wantDeepDive: boolean }
   | { type: 'SELECT_DEEP_DIMENSION'; dimension: string }
   | { type: 'RESET_FLOW' };

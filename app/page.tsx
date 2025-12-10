@@ -9,8 +9,8 @@ import { getMockChartData, getDeepDiveData } from '@/lib/mockData';
 // Initial state
 const initialState: WizardState = {
   step: 'welcome',
-  name: 'Alex',
-  role: 'Sales Manager',
+  name: 'Saurabh Sharma',
+  role: 'NAM',
   isLoading: false,
 };
 
@@ -51,6 +51,9 @@ function wizardReducer(state: WizardState, event: WizardEvent): WizardState {
         name: state.name,
         role: state.role,
       };
+
+    case 'SHOW_RESULT':
+      return { ...state, step: 'result', isLoading: false };
 
     default:
       return state;
@@ -93,41 +96,21 @@ export default function Home() {
             state.deepDiveDimension
           );
           setChartData(deepData);
+          setBrainMode('idle');
+          dispatch({ type: 'SHOW_RESULT' });
         } else if (state.kpiType && state.region) {
           const response = getMockChartData(state.kpiType, state.region);
           setChartData(response.chart);
+          setBrainMode('idle');
+          dispatch({ type: 'SHOW_RESULT' });
         }
-
-        setBrainMode('idle');
-        dispatch({
-          type: state.deepDiveDimension ? 'RESET_FLOW' : 'TOGGLE_DEEP_DIVE',
-          wantDeepDive: false
-        } as WizardEvent);
-      }, 2000);
-    } else if (state.step === 'result' && !state.showDeepDivePrompt) {
-      // Show deep dive prompt after chart is displayed
-      setTimeout(() => {
-        dispatch({ ...state, showDeepDivePrompt: true } as any);
-      }, 500);
+      }, 3000);
     } else if (state.step === 'deepDive') {
       addSystemMessage(
         'What dimension would you like to explore? Choose from Store, Category, Customer segment, or Channel.'
       );
     }
   }, [state.step, state.deepDiveDimension]);
-
-  // Fix for showing deep dive prompt
-  useEffect(() => {
-    if (state.step === 'result' && chartData && !state.showDeepDivePrompt && !state.deepDiveDimension) {
-      const timer = setTimeout(() => {
-        // Manually update to show prompt
-        dispatch({ type: 'TOGGLE_DEEP_DIVE', wantDeepDive: true } as any);
-        dispatch({ type: 'REQUEST_ANALYSIS' } as any); // This will trigger result view
-        // Actually we need to just update showDeepDivePrompt
-      }, 800);
-      return () => clearTimeout(timer);
-    }
-  }, [state.step, chartData, state.showDeepDivePrompt, state.deepDiveDimension]);
 
   const addSystemMessage = (content: string) => {
     setMessages((prev) => [
@@ -201,9 +184,9 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-app-bg">
-      <div className="max-w-[1440px] mx-auto px-6 py-6">
-        <div className="flex gap-6 items-stretch">
+    <main className="min-h-screen bg-app-bg flex items-center justify-center p-6">
+      <div className="max-w-[1600px] w-full mx-auto">
+        <div className="flex gap-8 items-center h-[95vh]">
           <ConversationPanel
             state={panelState}
             messages={messages}
