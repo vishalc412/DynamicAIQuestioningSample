@@ -55,23 +55,24 @@ export default function ConversationPanel({
       <div className="px-8 py-6 border-b border-border-soft/50 bg-gradient-to-r from-app-panel via-app-chat-system to-app-panel">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
+            {/* User Profile */}
             <div className="relative">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-secondary p-0.5 shadow-xl">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 p-0.5 shadow-xl">
                 <div className="w-full h-full rounded-2xl bg-app-panel flex items-center justify-center">
-                  <svg className="w-6 h-6 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
               </div>
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-accent-secondary rounded-full border-2 border-app-panel"></div>
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-app-panel"></div>
             </div>
             <div>
               <h1 className="text-xl font-bold text-text-primary">
-                Your Personal Sales Analyst
+                Welcome, {state.name}
               </h1>
               <p className="text-xs text-text-secondary flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-secondary animate-pulse"></span>
-                Available 24/7 for insights
+                <span className="px-2 py-0.5 bg-purple-500/20 border border-purple-500/30 rounded text-purple-400 font-semibold">{state.role}</span>
+                <span className="text-text-muted">• Nation-wide Sales Access</span>
               </p>
             </div>
           </div>
@@ -110,18 +111,21 @@ export default function ConversationPanel({
           <div className="animate-slide-up space-y-8 pt-12">
             <div className="space-y-4">
               <div className="inline-block px-4 py-2 bg-accent-primary/10 border border-accent-primary/30 rounded-full mb-2">
-                <span className="text-accent-primary text-sm font-semibold">Welcome</span>
+                <span className="text-accent-primary text-sm font-semibold">👋 Hi {state.name}!</span>
               </div>
               <h2 className="text-4xl font-bold text-text-primary leading-tight">
-                Hi {state.name}, <br />
-                <span className="text-gradient">Ready to analyze sales?</span>
+                I'm <span className="text-gradient">Smarty</span>, <br />
+                your AI Sales Assistant
               </h2>
               <p className="text-lg text-text-secondary max-w-xl leading-relaxed">
-                As a <span className="text-accent-primary font-semibold">{state.role}</span> for North America, I can help you analyze FMCG sales,
-                marketing campaigns, and joint business planning metrics.
+                I'm here to help you analyze FMCG sales, marketing campaigns, and JBP metrics across your nation-wide portfolio.
+                Let me crunch the numbers and provide insights so you can focus on strategy!
               </p>
               <div className="flex items-center gap-2 text-text-muted text-sm">
-                <span>Click an option below or type your question</span>
+                <svg className="w-4 h-4 text-accent-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span>Let's dive into your data - click below or ask me anything</span>
               </div>
             </div>
             <button

@@ -18,13 +18,13 @@ export default function HumanAnalystPanel({ mode, state }: HumanAnalystPanelProp
   useEffect(() => {
     if (mode === 'thinking') {
       if (state.deepDiveDimension) {
-        setCurrentActivity(`Deep diving into ${state.deepDiveDimension} analysis...`);
+        setCurrentActivity(`Let me deep dive into ${state.deepDiveDimension} for you...`);
       } else if (state.kpiType) {
         const activities = [
-          `Analyzing ${state.kpiType} patterns...`,
-          `Processing ${state.region} data...`,
-          `Calculating year-over-year trends...`,
-          `Identifying key insights...`,
+          `Crunching ${state.kpiType} numbers for you...`,
+          `Analyzing ${state.region} market trends...`,
+          `Finding insights in your data...`,
+          `Preparing recommendations...`,
         ];
         let currentIndex = 0;
         setCurrentActivity(activities[0]);
@@ -36,12 +36,12 @@ export default function HumanAnalystPanel({ mode, state }: HumanAnalystPanelProp
 
         return () => clearInterval(interval);
       } else {
-        setCurrentActivity('Preparing analysis workspace...');
+        setCurrentActivity('Getting everything ready for you...');
       }
     } else {
-      setCurrentActivity('Standing by for your next request');
+      setCurrentActivity(`Ready to help you, ${state.name}!`);
     }
-  }, [mode, state.kpiType, state.region, state.deepDiveDimension]);
+  }, [mode, state.kpiType, state.region, state.deepDiveDimension, state.name]);
 
   // Simulate progress bar
   useEffect(() => {
@@ -124,8 +124,8 @@ export default function HumanAnalystPanel({ mode, state }: HumanAnalystPanelProp
           </div>
 
           <div className="flex-1">
-            <h3 className="text-base font-bold text-text-primary">{state.name}</h3>
-            <p className="text-xs text-text-muted">{state.role}</p>
+            <h3 className="text-base font-bold text-text-primary">Smarty</h3>
+            <p className="text-xs text-text-muted">Your AI Sales Assistant</p>
           </div>
 
           {/* Ping Indicator */}
@@ -395,9 +395,9 @@ export default function HumanAnalystPanel({ mode, state }: HumanAnalystPanelProp
                 animate={{ opacity: [0.3, 1, 0.3] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
               />
-              {state.role || 'NAM'}
+              AI
             </div>
-            <div className="text-text-muted text-[9px]">Role</div>
+            <div className="text-text-muted text-[9px]">Assistant</div>
           </motion.div>
         </div>
       </div>
