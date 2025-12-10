@@ -27,6 +27,7 @@ export type WizardEvent =
   | { type: 'TOGGLE_DEEP_DIVE'; wantDeepDive: boolean }
   | { type: 'SELECT_DEEP_DIMENSION'; dimension: string }
   | { type: 'SELECT_FOLLOW_UP_ACTION'; action: string }
+  | { type: 'CHART_CLICK'; data: any }
   | { type: 'RESET_FLOW' };
 
 export type ChartData = {

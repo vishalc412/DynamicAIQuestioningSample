@@ -9,11 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "framer-motion": "^11.2.10",
+    "next": "^16.0.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "next": "^14.2.3",
-    "recharts": "^2.12.7",
-    "framer-motion": "^11.2.10"
+    "recharts": "^2.12.7"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",
