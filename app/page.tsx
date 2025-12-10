@@ -88,7 +88,7 @@ export default function Home() {
 
       // Simulate API call
       setBrainMode('thinking');
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         if (state.deepDiveDimension && state.kpiType && state.region) {
           const deepData = getDeepDiveData(
             state.kpiType,
@@ -103,8 +103,15 @@ export default function Home() {
           setChartData(response.chart);
           setBrainMode('idle');
           dispatch({ type: 'SHOW_RESULT' });
+        } else {
+          // Fallback: if no kpiType or region
+          setBrainMode('idle');
+          console.error('Missing kpiType or region:', { kpiType: state.kpiType, region: state.region });
         }
       }, 3000);
+
+      // Cleanup function to prevent memory leaks
+      return () => clearTimeout(timer);
     } else if (state.step === 'deepDive') {
       addSystemMessage(
         'What dimension would you like to explore? Choose from Store, Category, Customer segment, or Channel.'
