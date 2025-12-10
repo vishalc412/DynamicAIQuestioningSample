@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { WizardState, WizardEvent, Message, ChartData } from '@/types/wizard';
 import MessageBubble from './MessageBubble';
 import ChoiceChipGroup from './ChoiceChipGroup';
@@ -37,6 +37,36 @@ export default function ConversationPanel({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { speak, stop, isSpeaking, isSupported: isSpeechSupported } = useSpeechSynthesis();
   const lastMessageRef = useRef<string>('');
+
+  // Mute state - persisted in localStorage
+  const [isMuted, setIsMuted] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('smarty-muted');
+      return saved === 'true';
+    }
+    return false;
+  });
+
+  // Save mute state to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('smarty-muted', isMuted.toString());
+    }
+  }, [isMuted]);
+
+  // Wrapper function that respects mute state
+  const speakIfNotMuted = (text: string) => {
+    if (!isMuted) {
+      speak(text);
+    }
+  };
+
+  const toggleMute = () => {
+    if (isSpeaking) {
+      stop(); // Stop current speech when muting
+    }
+    setIsMuted(!isMuted);
+  };
 
   // Auto-scroll to bottom when new messages or charts appear
   useEffect(() => {
@@ -80,11 +110,11 @@ export default function ConversationPanel({
       const lastMessage = messages[messages.length - 1];
       if (lastMessage.type === 'system' && lastMessage.content !== lastMessageRef.current) {
         lastMessageRef.current = lastMessage.content;
-        // Auto-speak system messages (Smarty's responses)
-        speak(lastMessage.content);
+        // Auto-speak system messages (Smarty's responses) if not muted
+        speakIfNotMuted(lastMessage.content);
       }
     }
-  }, [messages, speak]);
+  }, [messages, isMuted]);
 
   // Speak welcome message when user first arrives
   const hasSpokenWelcome = useRef(false);
@@ -96,7 +126,7 @@ export default function ConversationPanel({
       const timer = setTimeout(() => {
         console.log('Attempting to speak welcome message');
         try {
-          speak(welcomeMessage);
+          speakIfNotMuted(welcomeMessage);
           hasSpokenWelcome.current = true;
           console.log('Welcome message spoken successfully');
         } catch (error) {
@@ -105,7 +135,7 @@ export default function ConversationPanel({
       }, 2000); // Increased to 2 seconds
       return () => clearTimeout(timer);
     }
-  }, [state.step, state.name, speak]);
+  }, [state.step, state.name, isMuted]);
 
   const regionChoices = [
     { id: 'North America', label: 'North America' },
@@ -165,17 +195,27 @@ export default function ConversationPanel({
             )}
             {isSpeechSupported && (
               <button
-                onClick={stop}
-                className={`p-2 rounded-xl transition-all duration-200 ${isSpeaking
-                  ? 'bg-accent-primary/20 border border-accent-primary/50 text-accent-primary animate-pulse'
-                  : 'bg-app-bg/50 border border-border-soft/50 text-text-muted hover:border-accent-primary/30 hover:text-accent-primary'
+                onClick={toggleMute}
+                className={`p-2 rounded-xl transition-all duration-200 ${isMuted
+                  ? 'bg-red-500/20 border border-red-500/50 text-red-400'
+                  : isSpeaking
+                    ? 'bg-accent-primary/20 border border-accent-primary/50 text-accent-primary animate-pulse'
+                    : 'bg-app-bg/50 border border-border-soft/50 text-text-muted hover:border-accent-primary/30 hover:text-accent-primary'
                   }`}
-                title={isSpeaking ? 'Stop speaking' : 'Voice output enabled'}
+                title={isMuted ? 'Unmute Smarty' : 'Mute Smarty'}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  {isSpeaking ? (
+                  {isMuted ? (
+                    // Muted icon (speaker with X)
+                    <>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                    </>
+                  ) : isSpeaking ? (
+                    // Speaking icon
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                   ) : (
+                    // Unmuted icon (speaker with sound waves)
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                   )}
                 </svg>
