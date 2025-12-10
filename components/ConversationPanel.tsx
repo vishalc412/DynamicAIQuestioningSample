@@ -45,23 +45,31 @@ export default function ConversationPanel({
   ];
 
   return (
-    <div className="flex-[0_0_60%] max-w-[880px] h-screen flex flex-col">
+    <div className="flex-[0_0_58%] max-w-[900px] h-screen flex flex-col bg-app-panel gradient-panel rounded-3xl shadow-2xl overflow-hidden border border-border-soft/50">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-border-soft">
+      <div className="px-8 py-6 border-b border-border-soft/50 bg-gradient-to-r from-app-panel to-app-chat-system">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-text-primary">
-            FMCG Sales & JBP Assistant
-          </h1>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg">
+              <span className="text-2xl">🤖</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-text-primary">
+                FMCG Sales & JBP Assistant
+              </h1>
+              <p className="text-xs text-text-muted">Powered by AI</p>
+            </div>
+          </div>
           {state.region && (
-            <span className="px-4 py-2 rounded-full bg-accent-primary/10 text-accent-primary text-sm font-medium border border-accent-primary/30">
-              {state.region}
+            <span className="px-4 py-2 rounded-full bg-accent-primary/15 text-accent-primary text-sm font-semibold border border-accent-primary/40 shadow-lg">
+              📍 {state.region}
             </span>
           )}
         </div>
       </div>
 
       {/* Scrollable conversation area */}
-      <div className="flex-1 overflow-y-auto px-8 py-6 space-y-4">
+      <div className="flex-1 overflow-y-auto px-8 py-6 space-y-4 scrollbar-thin scrollbar-thumb-accent-primary/20 scrollbar-track-transparent">
         {/* Messages */}
         {messages.map((message) => (
           <MessageBubble key={message.id} message={message} />
@@ -69,24 +77,30 @@ export default function ConversationPanel({
 
         {/* Welcome state */}
         {state.step === 'welcome' && (
-          <div className="animate-slide-up space-y-6 pt-8">
-            <div className="space-y-3">
-              <h2 className="text-3xl font-semibold text-text-primary">
-                Hi {state.name}, welcome back.
+          <div className="animate-slide-up space-y-8 pt-12">
+            <div className="space-y-4">
+              <div className="inline-block px-4 py-2 bg-accent-primary/10 border border-accent-primary/30 rounded-full mb-2">
+                <span className="text-accent-primary text-sm font-semibold">👋 Welcome</span>
+              </div>
+              <h2 className="text-4xl font-bold text-text-primary leading-tight">
+                Hi {state.name}, <br />
+                <span className="text-gradient">Ready to analyze sales?</span>
               </h2>
-              <p className="text-lg text-text-secondary max-w-xl">
-                As a {state.role} for North America, I can help you analyze FMCG sales and
-                joint business planning.
+              <p className="text-lg text-text-secondary max-w-xl leading-relaxed">
+                As a <span className="text-accent-primary font-semibold">{state.role}</span> for North America, I can help you analyze FMCG sales,
+                marketing campaigns, and joint business planning metrics.
               </p>
-              <p className="text-text-muted">
-                You can answer by clicking an option or typing.
-              </p>
+              <div className="flex items-center gap-2 text-text-muted text-sm">
+                <span>💡</span>
+                <span>Click an option below or type your question</span>
+              </div>
             </div>
             <button
               onClick={() => onEvent({ type: 'START_ANALYSIS' })}
-              className="px-8 py-4 gradient-accent rounded-xl text-white font-medium text-lg shadow-lg hover:scale-105 transition-transform duration-200"
+              className="group px-8 py-4 gradient-accent rounded-2xl text-white font-semibold text-lg shadow-2xl hover:shadow-accent-primary/50 hover:scale-105 transition-all duration-200 flex items-center gap-3"
             >
-              Start analysis
+              <span>Start Analysis</span>
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
             </button>
           </div>
         )}

@@ -1,91 +1,210 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 
 interface BrainAnimationProps {
   mode: 'idle' | 'thinking';
 }
 
 export default function BrainAnimation({ mode }: BrainAnimationProps) {
+  const isThinking = mode === 'thinking';
+
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      {/* Glow effect */}
-      <div
-        className={`absolute inset-0 rounded-full blur-3xl ${
-          mode === 'thinking' ? 'animate-pulse-glow-thinking' : 'animate-pulse-glow'
-        }`}
+      {/* Outer glow rings */}
+      <motion.div
+        className="absolute w-64 h-64 rounded-full"
         style={{
-          background: 'radial-gradient(circle, rgba(74, 222, 128, 0.3) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(74, 222, 128, 0.15) 0%, transparent 70%)',
+          filter: 'blur(20px)',
+        }}
+        animate={{
+          scale: isThinking ? [1, 1.2, 1] : [1, 1.1, 1],
+          opacity: isThinking ? [0.4, 0.7, 0.4] : [0.3, 0.5, 0.3],
+        }}
+        transition={{
+          duration: isThinking ? 1.5 : 3,
+          repeat: Infinity,
+          ease: 'easeInOut',
         }}
       />
 
-      {/* Brain SVG */}
-      <div className="relative z-10">
+      {/* Middle ring */}
+      <motion.div
+        className="absolute w-48 h-48 rounded-full border-2"
+        style={{
+          borderColor: 'rgba(74, 222, 128, 0.3)',
+        }}
+        animate={{
+          scale: isThinking ? [1, 1.15, 1] : [1, 1.08, 1],
+          rotate: isThinking ? 360 : 0,
+        }}
+        transition={{
+          scale: {
+            duration: isThinking ? 2 : 4,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          },
+          rotate: {
+            duration: isThinking ? 8 : 20,
+            repeat: Infinity,
+            ease: 'linear',
+          },
+        }}
+      />
+
+      {/* Neural network nodes container */}
+      <div className="relative w-40 h-40">
+        {/* Central core */}
+        <motion.div
+          className="absolute top-1/2 left-1/2 w-12 h-12 -ml-6 -mt-6 rounded-full"
+          style={{
+            background: 'linear-gradient(135deg, #4ade80, #22d3ee)',
+            boxShadow: '0 0 30px rgba(74, 222, 128, 0.6)',
+          }}
+          animate={{
+            scale: isThinking ? [1, 1.2, 1] : [1, 1.05, 1],
+          }}
+          transition={{
+            duration: isThinking ? 0.8 : 2,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+
+        {/* Orbiting nodes */}
+        {[0, 60, 120, 180, 240, 300].map((angle, index) => {
+          const radius = 60;
+          const x = Math.cos((angle * Math.PI) / 180) * radius;
+          const y = Math.sin((angle * Math.PI) / 180) * radius;
+
+          return (
+            <motion.div
+              key={index}
+              className="absolute w-3 h-3 rounded-full"
+              style={{
+                left: '50%',
+                top: '50%',
+                marginLeft: -6,
+                marginTop: -6,
+                background: index % 2 === 0 ? '#4ade80' : '#38bdf8',
+                boxShadow: `0 0 10px ${index % 2 === 0 ? 'rgba(74, 222, 128, 0.8)' : 'rgba(56, 189, 248, 0.8)'}`,
+              }}
+              animate={{
+                x: [x, x * 1.2, x],
+                y: [y, y * 1.2, y],
+                scale: isThinking ? [1, 1.5, 1] : [1, 1.2, 1],
+                opacity: isThinking ? [0.6, 1, 0.6] : [0.5, 0.8, 0.5],
+              }}
+              transition={{
+                duration: isThinking ? 1 : 2,
+                delay: index * 0.1,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+            />
+          );
+        })}
+
+        {/* Connection lines */}
         <svg
-          width="240"
-          height="240"
-          viewBox="0 0 240 240"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className={mode === 'thinking' ? 'animate-pulse' : ''}
+          className="absolute inset-0 w-full h-full"
+          style={{ overflow: 'visible' }}
         >
-          {/* Brain outline with neural connections */}
-          <g opacity="0.9">
-            {/* Left hemisphere */}
-            <path
-              d="M80 60C60 60 45 75 45 95C45 105 48 114 54 121C48 128 45 137 45 147C45 167 60 182 80 182C85 182 90 181 94 179"
-              stroke="url(#gradient1)"
-              strokeWidth="3"
-              strokeLinecap="round"
-              fill="none"
-            />
-
-            {/* Right hemisphere */}
-            <path
-              d="M160 60C180 60 195 75 195 95C195 105 192 114 186 121C192 128 195 137 195 147C195 167 180 182 160 182C155 182 150 181 146 179"
-              stroke="url(#gradient1)"
-              strokeWidth="3"
-              strokeLinecap="round"
-              fill="none"
-            />
-
-            {/* Neural connections */}
-            <g opacity={mode === 'thinking' ? '0.8' : '0.4'}>
-              <circle cx="70" cy="100" r="4" fill="#4ade80" className={mode === 'thinking' ? 'animate-pulse' : ''} />
-              <circle cx="170" cy="100" r="4" fill="#4ade80" className={mode === 'thinking' ? 'animate-pulse' : ''} style={{ animationDelay: '200ms' }} />
-              <circle cx="120" cy="80" r="4" fill="#38bdf8" className={mode === 'thinking' ? 'animate-pulse' : ''} style={{ animationDelay: '400ms' }} />
-              <circle cx="90" cy="140" r="4" fill="#4ade80" className={mode === 'thinking' ? 'animate-pulse' : ''} style={{ animationDelay: '100ms' }} />
-              <circle cx="150" cy="140" r="4" fill="#38bdf8" className={mode === 'thinking' ? 'animate-pulse' : ''} style={{ animationDelay: '300ms' }} />
-
-              {/* Connection lines */}
-              <line x1="70" y1="100" x2="120" y2="80" stroke="#4ade80" strokeWidth="1.5" opacity="0.3" />
-              <line x1="170" y1="100" x2="120" y2="80" stroke="#38bdf8" strokeWidth="1.5" opacity="0.3" />
-              <line x1="90" y1="140" x2="150" y2="140" stroke="#4ade80" strokeWidth="1.5" opacity="0.3" />
-            </g>
-
-            {/* Center connection */}
-            <path
-              d="M94 179C100 185 110 189 120 189C130 189 140 185 146 179"
-              stroke="url(#gradient2)"
-              strokeWidth="3"
-              strokeLinecap="round"
-              fill="none"
-            />
-          </g>
-
-          {/* Gradients */}
           <defs>
-            <linearGradient id="gradient1" x1="45" y1="60" x2="195" y2="182">
-              <stop offset="0%" stopColor="#4ade80" />
-              <stop offset="100%" stopColor="#22d3ee" />
-            </linearGradient>
-            <linearGradient id="gradient2" x1="94" y1="179" x2="146" y2="189">
-              <stop offset="0%" stopColor="#22d3ee" />
-              <stop offset="100%" stopColor="#4ade80" />
+            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#4ade80" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.4" />
             </linearGradient>
           </defs>
+
+          {[0, 60, 120, 180, 240, 300].map((angle, index) => {
+            const radius = 60;
+            const x = Math.cos((angle * Math.PI) / 180) * radius + 80;
+            const y = Math.sin((angle * Math.PI) / 180) * radius + 80;
+
+            return (
+              <motion.line
+                key={index}
+                x1="80"
+                y1="80"
+                x2={x}
+                y2={y}
+                stroke="url(#lineGradient)"
+                strokeWidth="1.5"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{
+                  pathLength: isThinking ? [0, 1, 0] : [0.5, 1, 0.5],
+                  opacity: isThinking ? [0.3, 0.7, 0.3] : [0.2, 0.5, 0.2],
+                }}
+                transition={{
+                  duration: isThinking ? 1.5 : 3,
+                  delay: index * 0.15,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              />
+            );
+          })}
         </svg>
+
+        {/* Particles */}
+        {isThinking && (
+          <>
+            {[...Array(12)].map((_, index) => {
+              const angle = (index * 30 * Math.PI) / 180;
+              const distance = 30 + Math.random() * 40;
+
+              return (
+                <motion.div
+                  key={`particle-${index}`}
+                  className="absolute w-1 h-1 rounded-full"
+                  style={{
+                    left: '50%',
+                    top: '50%',
+                    background: index % 3 === 0 ? '#4ade80' : '#38bdf8',
+                  }}
+                  initial={{
+                    x: 0,
+                    y: 0,
+                    opacity: 0,
+                  }}
+                  animate={{
+                    x: Math.cos(angle) * distance,
+                    y: Math.sin(angle) * distance,
+                    opacity: [0, 1, 0],
+                    scale: [0, 1.5, 0],
+                  }}
+                  transition={{
+                    duration: 2,
+                    delay: index * 0.1,
+                    repeat: Infinity,
+                    ease: 'easeOut',
+                  }}
+                />
+              );
+            })}
+          </>
+        )}
       </div>
+
+      {/* Status text */}
+      <motion.div
+        className="absolute bottom-0 text-center"
+        animate={{
+          opacity: isThinking ? [0.7, 1, 0.7] : 0.5,
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      >
+        <p className="text-accent-primary text-sm font-medium">
+          {isThinking ? 'AI Analyzing...' : 'AI Ready'}
+        </p>
+      </motion.div>
     </div>
   );
 }
