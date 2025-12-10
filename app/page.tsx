@@ -377,6 +377,14 @@ export default function Home() {
       else if (lowerMsg.includes('recommendation') || lowerMsg.includes('suggest')) {
         response = `💡 Based on the analysis, here are my recommendations:\n\n1. **Expand high-performing segments** - Increase investment by ${(Math.random() * 10 + 15).toFixed(0)}%\n2. **Optimize underperforming areas** - Focus on operational efficiency\n3. **Leverage seasonal trends** - Plan campaigns around peak periods\n4. **Customer retention** - Implement loyalty programs\n\nWould you like a detailed action plan for any of these?`;
       }
+      // Analyze area lacking
+      else if (lowerMsg.includes('area lacking') || lowerMsg.includes('analyze area')) {
+        response = `🔍 Analyzing areas that need improvement:\n\n**Key Areas Lacking:**\n1. **Market Penetration** - Currently at ${(Math.random() * 10 + 60).toFixed(1)}% of potential\n2. **Customer Retention** - ${(Math.random() * 5 + 10).toFixed(1)}% below industry average\n3. **Product Mix** - Limited diversity in ${(Math.random() * 2 + 3).toFixed(0)} categories\n4. **Regional Coverage** - Underperforming in ${['Midwest', 'South', 'West'][Math.floor(Math.random() * 3)]}\n\n**Recommended Focus Areas:**\n• Increase marketing spend in underperforming regions\n• Expand product portfolio\n• Implement customer loyalty programs\n\nWould you like a detailed action plan?`;
+      }
+      // Give improvement plan
+      else if (lowerMsg.includes('improvement plan') || lowerMsg.includes('give improvement')) {
+        response = `📋 **Improvement Plan:**\n\n**Short-term (0-3 months):**\n1. Launch targeted marketing campaign in underperforming regions\n2. Optimize pricing strategy for top ${(Math.random() * 2 + 3).toFixed(0)} products\n3. Implement weekly performance tracking dashboard\n\n**Medium-term (3-6 months):**\n1. Expand product line with ${(Math.random() * 2 + 2).toFixed(0)} new SKUs\n2. Partner with ${(Math.random() * 3 + 5).toFixed(0)} new distributors\n3. Launch customer loyalty program\n\n**Long-term (6-12 months):**\n1. Open ${(Math.random() * 5 + 10).toFixed(0)} new retail locations\n2. Implement AI-driven demand forecasting\n3. Achieve ${(Math.random() * 10 + 15).toFixed(0)}% market share growth\n\n**Expected ROI:** ${(Math.random() * 10 + 20).toFixed(1)}% increase in revenue\n\nWould you like to explore any specific area in detail?`;
+      }
       // Default response
       else {
         response = `I understand you're asking about "${message}". Let me help you with that!\n\nBased on our current data:\n• Sales trends are positive\n• Key opportunities exist in ${['beverages', 'snacks', 'new markets'][Math.floor(Math.random() * 3)]}\n• I recommend focusing on data-driven strategies\n\nWould you like me to show you specific charts or deeper analysis?`;
