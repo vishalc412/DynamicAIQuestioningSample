@@ -42,7 +42,7 @@ export default function ConversationPanel({
   ];
 
   return (
-    <div className="flex-[0_0_68%] max-w-[1100px] h-screen flex flex-col bg-app-panel gradient-panel rounded-3xl shadow-2xl overflow-hidden border border-border-soft/50">
+    <div className="flex-[0_0_68%] max-w-[1100px] h-full flex flex-col bg-app-panel gradient-panel rounded-3xl shadow-2xl overflow-hidden border border-border-soft/50">
       {/* Header */}
       <div className="px-8 py-6 border-b border-border-soft/50 bg-gradient-to-r from-app-panel to-app-chat-system">
         <div className="flex items-center justify-between">

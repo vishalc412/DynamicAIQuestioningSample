@@ -228,11 +228,11 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-app-bg flex flex-col">
-      {/* Main content area */}
-      <div className="flex-1 flex items-center justify-center p-6 pb-0">
-        <div className="max-w-[1600px] w-full mx-auto">
-          <div className="flex gap-8 items-center h-[calc(100vh-180px)]">
+    <main className="h-screen bg-app-bg flex flex-col overflow-hidden">
+      {/* Main content area - Conversation and Brain panels */}
+      <div className="flex-1 flex items-center justify-center p-6 overflow-hidden">
+        <div className="max-w-[1600px] w-full mx-auto h-full">
+          <div className="flex gap-8 items-stretch h-full">
             <ConversationPanel
               state={panelState}
               messages={messages}
@@ -246,8 +246,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Fixed chat input at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 z-50">
+      {/* Footer - Chat input */}
+      <div className="flex-shrink-0">
         <ChatInput
           onSendMessage={handleChatMessage}
           disabled={state.isLoading}
